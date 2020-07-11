@@ -2,47 +2,51 @@ import React, { Component } from 'react';
 
 class App extends Component {
   state = {
-    text: 'this is text from the state',
-    secondState: 'this is second state'
+    tasks: [
+      { title: 'the first title' },
+      { title: 'the second title' },
+      { title: 'the third title' },
+    ],
   };
 
+  removeItem = (title) => {
+    //you dont have acces to the state directly it's immutable you can acces it through the "this.setState({})"
+    this.setState({
+      tasks: this.state.tasks.filter((task) => {
+          return task.title !== title
+      })
+    })
+  }
+
   render() {
-    const { text, secondState } = this.state;
     return (
       <div>
-        <TextComponent textA="text as props" text={text} />
-        <AnotherTextComponent text={text} />
-        <StateComponent testState={secondState} />
+        <TasksComponent titles={this.state.tasks} removeItem={this.removeItem} />
       </div>
     );
   }
 }
 
-const TextComponent = ({textA, text}) => {
+const TasksComponent = ({ titles, removeItem }) => {
   return (
     <div>
-      <p>{textA}</p>
-      <p>{text}</p>
+      {titles.map((item, index) => {
+        return <Task key={index} title={item.title} index={index} removeItem={removeItem} />;
+      })}
     </div>
   );
 };
 
-const AnotherTextComponent = (props) => {
+const Task = ({ title, index, removeItem}) => {
   return (
     <div>
+      {' '}
       <p>
-        title: <strong>{props.text}</strong>
+        Todo: <span>{title}</span>
+        <button onClick={() => removeItem(title)}>x</button>
       </p>
     </div>
   );
 };
-
-const  StateComponent = ({secondState}) => {
-  return (
-    <div>
-      <p>{secondState}</p>
-    </div> 
-  )
-}
 
 export default App;
